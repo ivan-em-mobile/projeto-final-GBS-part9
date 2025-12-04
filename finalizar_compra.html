@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Finalizar Compra - GBS Madeiras</title>
+    <link rel="icon" href="gbsm.jpg" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+    <h1>GBS Madeiras</h1>
+    <img src="gbsm.jpg" alt="GBS Madeiras">
+    <p>Comércio de Móveis Maderias e Artefatos</p>
+    <button id="theme-toggle" aria-label="Alternar modo claro/escuro">
+        <i class="fas fa-moon"></i> Modo Escuro
+    </button>
+</header>
+<script src="theme-mode.js"></script>
+
+<nav>
+    <a href="index.html">Início</a>
+    <a href="produtos.html">Produtos</a>
+    <a href="contato.html">Contato</a>
+    <a href="pedido.html">Encomenda</a>
+    <a href="carrinho.html">Carrinho</a>
+</nav>
+
+<div class="container">
+    <section id="finalizar">
+        <h2>Finalizar Compra</h2>
+
+        <div id="lista-carrinho">
+            <h3>Itens do Carrinho</h3>
+            <div id="itens"></div>
+            <h3>Total Geral: <span id="total-geral">R$ 0,00</span></h3>
+        </div>
+
+        <hr>
+
+        <form id="form-compra" method="GET" action="confirmacao.html">
+
+            <h3>Dados de Entrega</h3>
+
+            <label for="nome">Nome Completo:</label>
+            <input type="text" id="nome" name="nome" required>
+
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="endereco">Endereço de Entrega:</label>
+            <textarea id="endereco" name="endereco" required></textarea>
+
+            <label for="telefone">Telefone:</label>
+            <input type="tel" id="telefone" name="telefone" required>
+
+            <label for="formapagamento">Forma de Pagamento:</label>
+            <select id="formapagamento" name="formapagamento" required>
+                <option value="boleto">Boleto Bancário</option>
+                <option value="cartao">Cartão de Crédito</option>
+                <option value="pix">Pix</option>
+            </select>
+
+            <!-- Hidden fields (serão preenchidos automaticamente) -->
+            <input type="hidden" id="produtos-json" name="produtos">
+            <input type="hidden" id="total" name="total">
+
+            <div id="finalizar-compra">
+                <button type="submit">Confirmar Compra</button>
+            </div>
+        </form>
+    </section>
+</div>
+
+<footer>
+    <p>&copy; 2025 GBS Madeiras - Todos os direitos reservados</p>
+</footer>
+
+<script>
+/*
+  Lógica robusta para preencher o conteúdo da página FINALIZAR:
+  - primeiro tenta ler parâmetros da URL (produto_nome / produto_preco / quantidade)
+  - se existir 'produtos' (JSON) na query string, usa esse JSON
+  - se nada disso existir, usa localStorage (comportamento anterior)
+  - preenche campos do formulário com valores fornecidos via URL quando existirem
+*/
+
+(function () {
+    // Helper: formatar valor em R$
+    function formatBRL(value) {
+        return 'R$ ' + Number(value).toFixed(2);
+    }
+
+    // Pega params da URL
+    const params = new URLSearchParams(window.location.search);
+
+    // Retorna um array de items { nome, quantidade, total }
+    function buildItemsFromURLParams() {
+        const nome = params.get('produto_nome');
+        const preco = params.get('produto_preco');
+        const quantidade = params.get('quantidade');
+
+        if (nome && preco && quantidade) {
+            const q = Number(quantidade) || 0;
+            const p = parseFloat(preco) || 0;
+            const total = p * q;
+            return [{
+                nome: nome,
+                quantidade: q,
+                preco_unitario: p,
+                total: total
+            }];
+        }
+        return null;
+    }
+
+    // Se houver um parâmetro 'produtos' (JSON), parse e usa
+    function buildItemsFromProdutosParam() {
+        const produtosJSON = params.get('produtos');
+        if (produtosJSON) {
+            try {
+                const arr = JSON.parse(produtosJSON);
+                // Espera que cada item tenha: nome, quantidade, total (como seu código anterior)
+                return arr.map(it => ({
+                    nome: it.nome || it.produto || 'Produto',
+                    quantidade: Number(it.quantidade) || 1,
+                    preco_unitario: (it.preco_unitario !== undefined) ? Number(it.preco_unitario) : (Number(it.total) / (Number(it.quantidade) || 1)) || 0,
+                    total: Number(it.total) || 0
+                }));
+            } catch (e) {
+                console.warn('produtos param não é um JSON válido:', e);
+                return null;
+            }
+        }
+        return null;
+    }
+
+    // Se nada da URL, lê localStorage (comportamento antigo)
+    function buildItemsFromLocalStorage() {
+        const carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+        if (!Array.isArray(carrinho) || carrinho.length === 0) return null;
+        return carrinho.map(it => ({
+            nome: it.nome || it.produto || 'Produto',
+            quantidade: Number(it.quantidade) || 1,
+            preco_unitario: (it.preco_unitario !== undefined) ? Number(it.preco_unitario) : (Number(it.total) / (Number(it.quantidade) || 1)) || 0,
+            total: Number(it.total) || 0
+        }));
+    }
+
+    // Decide a fonte dos items
+    let items = buildItemsFromURLParams() || buildItemsFromProdutosParam() || buildItemsFromLocalStorage() || [];
+
+    // Se veio por pedido.html, também preencher automaticamente os campos de entrega
+    function prefillFormFieldsFromParams() {
+        const nome = params.get('nome');
+        const email = params.get('email');
+        const endereco = params.get('endereco');
+        const telefone = params.get('telefone');
+
+        if (nome) document.getElementById('nome').value = nome;
+        if (email) document.getElementById('email').value = email;
+        if (endereco) document.getElementById('endereco').value = endereco;
+        if (telefone) document.getElementById('telefone').value = telefone;
+    }
+
+    // Renderiza itens na página e retorna total
+    function renderItemsAndTotal(itemsArr) {
+        const container = document.getElementById('itens');
+        container.innerHTML = '';
+
+        if (!itemsArr || itemsArr.length === 0) {
+            container.innerHTML = '<p>Seu carrinho está vazio</p>';
+            document.getElementById('total-geral').textContent = formatBRL(0);
+            // também atualiza hidden fields
+            document.getElementById('produtos-json').value = JSON.stringify([]);
+            document.getElementById('total').value = (0).toFixed(2);
+            return 0;
+        }
+
+        let totalGeral = 0;
+        let html = '';
+
+        itemsArr.forEach(item => {
+            const nome = item.nome || 'Produto';
+            const quantidade = Number(item.quantidade) || 1;
+            const total = Number(item.total) || (Number(item.preco_unitario) || 0) * quantidade;
+
+            totalGeral += total;
+
+            html += `
+                <div class="item-resumo">
+                    <p><strong>${nome}</strong></p>
+                    <p>Quantidade: ${quantidade}</p>
+                    <p>Total: ${formatBRL(total)}</p>
+                    <hr>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+        document.getElementById('total-geral').textContent = formatBRL(totalGeral);
+
+        // atualiza hidden fields
+        document.getElementById('produtos-json').value = JSON.stringify(itemsArr);
+        document.getElementById('total').value = totalGeral.toFixed(2);
+
+        return totalGeral;
+    }
+
+    // Preenche campos de entrega caso venham via URL (útil quando veio do pedido.html)
+    prefillFormFieldsFromParams();
+
+    // Renderiza
+    renderItemsAndTotal(items);
+
+    // Intercepta envio do formulário para redirecionar conforme forma de pagamento (mantendo seu comportamento)
+    document.getElementById("form-compra").addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const metodoPagamento = document.getElementById('formapagamento').value;
+        const form = event.target;
+
+        // garante que os campos hidden estejam sincronizados (em especial quando veio por URL)
+        // produtos-json e total já foram preenchidos na renderização acima
+
+        // cria query string com todos os campos do formulário atual
+        const paramsString = new URLSearchParams(new FormData(form)).toString();
+
+        if (metodoPagamento === 'cartao') {
+            window.location.href = `pagamento_cartao.html?${paramsString}`;
+        } else if (metodoPagamento === 'boleto') {
+            window.location.href = `pagamento_boleto.html?${paramsString}`;
+        } else {
+            // PIX ou outros -> enviar diretamente para confirmacao.html (padrão)
+            form.submit();
+        }
+    });
+
+})();
+</script>
+
+<style>
+/* Mantive seu pequeno estilo inline para item-resumo (idêntico ao anterior) */
+.item-resumo {
+    background: #f2f2f2;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+</style>
+
+</body>
+</html>

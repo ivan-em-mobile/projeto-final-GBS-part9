@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento via PIX - GBS Madeiras</title>
+    <link rel="icon" href="gbsm.jpg" type="image/png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+    <h1>GBS Madeiras</h1>
+    <img src="gbsm.jpg" alt="GBS">
+    <p>Pagamento via PIX</p>
+    <button id="theme-toggle"><i class="fas fa-moon"></i> Modo Escuro</button>
+</header>
+<script src="theme-mode.js"></script>
+
+<nav>
+    <a href="index.html">Início</a>
+    <a href="produtos.html">Produtos</a>
+    <a href="contato.html">Contato</a>
+    <a href="pedido.html">Encomenda</a>
+    <a href="carrinho.html">Carrinho</a>
+</nav>
+
+<div class="container">
+    <section id="pagamento-pix">
+        <h2>Pagamento com PIX</h2>
+        <p>Use o QR Code abaixo para pagar instantaneamente.</p>
+
+        <div id="pix-box">
+            <h3>QR Code PIX</h3>
+            <img id="qrcode-pix" src="" alt="QR Code PIX" style="width:240px; display:block; margin:auto;">
+
+            <h3>Código Copia e Cola:</h3>
+            <textarea id="pix-copia-cola" readonly></textarea>
+
+            <button id="copiar-pix">Copiar Código PIX</button>
+        </div>
+
+        <form id="form-final-pix" action="confirmacao.html" method="GET">
+            <input type="hidden" id="produtos" name="produtos">
+            <input type="hidden" id="total" name="total">
+            <input type="hidden" id="nome" name="nome">
+            <input type="hidden" id="email" name="email">
+            <input type="hidden" id="endereco" name="endereco">
+            <input type="hidden" id="telefone" name="telefone">
+            <input type="hidden" name="formapagamento" value="PIX">
+
+            <button type="submit">Confirmar Pagamento</button>
+        </form>
+    </section>
+</div>
+
+<footer>
+    <p>&copy; 2025 GBS Madeiras - Todos os direitos reservados</p>
+</footer>
+
+
+<script>
+// RECEBER OS DADOS DA URL
+document.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+
+    const nome = params.get("nome") || "";
+    const email = params.get("email") || "";
+    const endereco = params.get("endereco") || "";
+    const telefone = params.get("telefone") || "";
+    const produtos = params.get("produtos") || "[]";
+    const total = parseFloat(params.get("total") || "0").toFixed(2);
+
+    // Preencher hidden inputs
+    document.getElementById("nome").value = nome;
+    document.getElementById("email").value = email;
+    document.getElementById("endereco").value = endereco;
+    document.getElementById("telefone").value = telefone;
+    document.getElementById("produtos").value = produtos;
+    document.getElementById("total").value = total;
+
+    // --- GERAR CÓDIGO PIX COPIA E COLA ---
+    const chavePix = "gbs@pagamentos.com";  // coloque aqui sua chave real se quiser
+    const identificador = "GBS-" + Date.now();
+
+    const pixCopiaCola =
+`00020126450014BR.GOV.BCB.PIX0114${chavePix}520400005303986540${String(total).replace('.', '')}
+5802BR5912GBS MADEIRAS6009SAO PAULO62070503***6304ABCD`;
+
+    document.getElementById("pix-copia-cola").value = pixCopiaCola;
+
+    // --- GERAR QR CODE (API gratuita do Google Charts) ---
+    const qrURL = 
+        `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent(pixCopiaCola)}`;
+
+    document.getElementById("qrcode-pix").src = qrURL;
+
+    // --- BOTÃO COPIAR ---
+    document.getElementById("copiar-pix").addEventListener("click", () => {
+        navigator.clipboard.writeText(pixCopiaCola);
+        alert("Código PIX copiado!");
+    });
+});
+</script>
+
+
+
+</body>
+</html>

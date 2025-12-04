@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GBS Madeiras - Faça seu Pedido</title>
+    <link rel="icon" href="gbsm.jpg" type="image/png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+    <h1>GBS Madeiras</h1>
+    <img src="gbsm.jpg" alt="GBS Madeiras">
+    <p>Comércio de Móveis Maderias e Artefatos</p>
+
+    <button id="theme-toggle" aria-label="Alternar modo claro/escuro">
+        <i class="fas fa-moon"></i> Modo Escuro
+    </button>
+</header>
+
+<script src="theme-mode.js"></script>
+
+<nav>
+    <a href="index.html">Início</a>
+    <a href="produtos.html">Produtos</a>
+    <a href="contato.html">Contato</a>
+    <a href="pedido.html">Encomenda</a>
+    <a href="carrinho.html">Carrinho</a>
+</nav>
+
+<div class="container">
+    <section id="pedido">
+        <h2>Faça seu Pedido</h2>
+        <p>Preencha o formulário abaixo para fazer a sua encomenda. Nossa equipe entrará em contato o mais rápido possível para confirmar seu pedido.</p>
+
+        <!-- FORMULÁRIO COMPLETO -->
+        <form action="finalizar_compra.html" method="GET">
+
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="produto">Produto:</label>
+            <select id="produto" name="produto" required>
+                <option value="" disabled selected>Selecione um produto</option>
+
+                <option value="Madeira de Pinus|15">Madeira de Pinus — R$ 15,00</option>
+                <option value="Madeira de Eucalipto|18">Madeira de Eucalipto — R$ 18,00</option>
+                <option value="Madeira de Teca|45">Madeira de Teca — R$ 45,00</option>
+                <option value="Madeira de Jatobá|50">Madeira de Jatobá — R$ 50,00</option>
+                <option value="Madeira de Angelim|35">Madeira de Angelim — R$ 35,00</option>
+
+                <option value="Madeira de Cedro|30">Madeira de Cedro — R$ 30,00</option>
+                <option value="Madeira de Cumaru|60">Madeira de Cumaru — R$ 60,00</option>
+                <option value="Madeira de Itaúba|40">Madeira de Itaúba — R$ 40,00</option>
+                <option value="Madeira de Freijó|25">Madeira de Freijó — R$ 25,00</option>
+                <option value="Madeira de Caviúna|70">Madeira de Caviúna — R$ 70,00</option>
+
+                <option value="Madeira de Peroba|28">Madeira de Peroba — R$ 28,00</option>
+                <option value="Madeira de Massaranduba|55">Madeira de Massaranduba — R$ 55,00</option>
+                <option value="Madeira de Mogno|150">Madeira de Mogno — R$ 150,00</option>
+                <option value="Madeira de Roxinho|85">Madeira de Roxinho — R$ 85,00</option>
+                <option value="Madeira de Sucupira|45">Madeira de Sucupira — R$ 45,00</option>
+
+                <option value="Madeira de Aroeira|38">Madeira de Aroeira — R$ 38,00</option>
+                <option value="Tábua de Pinus|20">Tábua de Pinus — R$ 20,00</option>
+                <option value="Tábua de Eucalipto|22">Tábua de Eucalipto — R$ 22,00</option>
+            </select>
+
+            <label for="quantidade">Quantidade (m²):</label>
+            <input type="number" id="quantidade" name="quantidade" required>
+
+            <label for="observacao">Observações:</label>
+            <textarea id="observacao" name="observacao" rows="4" placeholder="Informações adicionais (se necessário)"></textarea>
+
+            <!-- CAMPOS AUTOMÁTICOS (NÃO APARECEM PARA O USUÁRIO) -->
+            <input type="hidden" id="produto_nome" name="produto_nome">
+            <input type="hidden" id="produto_preco" name="produto_preco">
+
+            <button type="submit">Enviar Pedido</button>
+        </form>
+    </section>
+</div>
+
+<footer>
+    <p>&copy; 2025 GBS Madeiras - Todos os direitos reservados</p>
+</footer>
+
+<!-- SCRIPT PARA SEPARAR PRODUTO E PREÇO -->
+<script>
+document.getElementById("produto").addEventListener("change", function () {
+    const partes = this.value.split("|");
+
+    document.getElementById("produto_nome").value = partes[0]; // Nome do produto
+    document.getElementById("produto_preco").value = partes[1]; // Preço numérico
+});
+</script>
+
+</body>
+</html>

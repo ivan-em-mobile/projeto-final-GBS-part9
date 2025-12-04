@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>GBS Madeiras - Faça seu Pedido</title>
+    <link rel="icon" href="gbsm.jpg" type="image/png" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header>
+
+    <!-- 🔥 BANNER ANIMADO ATRÁS DO TÍTULO -->
+    <div class="banner-slider">
+        <div class="slide"><img src="gbs27.jpg"></div>
+        <div class="slide"><img src="madeiras.jpg"></div>
+        <div class="slide"><img src="abu.jpg"></div>
+    </div>
+
+    <!-- Conteúdo do header por cima -->
+    <h1>GBS Madeiras</h1>
+    <img class="logo-topo" src="gbsm.jpg" alt="GBS Madeiras">
+    <p>Comércio de Móveis Madeiras e Artefatos</p>
+
+    <!-- Botão modo escuro -->
+    <button id="theme-toggle">
+        <i class="fas fa-moon"></i> Modo Escuro
+    </button>
+
+</header>
+
+
+<nav id="mobile-menu" class="main-nav">
+    <a href="index.html">Início</a>
+    <a href="produtos.html">Produtos</a>
+    <a href="contato.html">Contato</a>
+    <a href="pedido.html">Encomenda</a>
+    <a href="carrinho.html">Carrinho</a>
+</nav>
+
+  <div class="container">
+        <section id="home">
+            <h2>Bem-vindo à GBS Madeiras</h2>
+            <p>🔻 Madeiras para coberturas 🏠 – Ideal para projetos de telhados e estruturas.<br>
+            🔻 Variedade de telhas 🏘 – Telhas de diferentes materiais para garantir durabilidade e estética.<br>
+            🔻 MDF, Compensado, Ferragens 🔨🗜 – Materiais de alta qualidade para marcenaria e construção.<br>
+            🔻 Portas e montagem 🚪 – Soluções completas para o acabamento do seu projeto, com instalação profissional.</p>
+        </section>
+    </div>
+
+<footer>
+    <p>&copy; 2025 GBS Madeiras - Todos os direitos reservados</p>
+</footer>
+
+<script src="theme-mode.js"></script>
+
+<!-- JS do slider -->
+<script>
+let index = 0;
+const slides = document.querySelectorAll(".banner-slider .slide");
+
+function trocarSlide() {
+    slides.forEach((slide) => slide.classList.remove("ativo"));
+    slides[index].classList.add("ativo");
+
+    index = (index + 1) % slides.length; // LOOP INFINITO
+}
+
+setInterval(trocarSlide, 3500); // troca a cada 3.5s
+trocarSlide();
+</script>
+
+</body>
+</html>

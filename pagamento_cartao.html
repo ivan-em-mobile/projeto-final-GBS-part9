@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento com Cartão - GBS Madeiras</title>
+    <link rel="icon" href="gbsm.jpg" type="image/png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <h1>GBS Madeiras</h1>
+        <img src="gbsm.jpg" alt="GBS Madeiras">
+        <p>Comércio de Móveis Maderias e Artefatos</p>
+        <button id="theme-toggle" aria-label="Alternar modo claro/escuro">
+            <i class="fas fa-moon"></i> Modo Escuro
+        </button>
+    </header>
+    <script src="theme-mode.js"></script>
+
+    <select id="formapagamento" name="formapagamento" required>
+    <option value="boleto">Boleto Bancário</option>
+    <option value="cartao">Cartão de Crédito</option> <option value="pix">Pix</option>
+</select>
+
+    <nav>
+        <a href="index.html">Início</a>
+        <a href="produtos.html">Produtos</a>
+        <a href="contato.html">Contato</a>
+        <a href="pedido.html">Encomenda</a>
+        <a href="carrinho.html">Carrinho</a>
+    </nav>
+
+    <div class="container">
+        <section id="pagamento-cartao">
+            <h2>Pagamento com Cartão de Crédito</h2>
+            <p>Por favor, insira os dados do seu cartão e a senha para concluir a compra.</p>
+
+            <form id="form-pagamento-cartao" action="confirmacao.html" method="GET">
+                
+                <label for="numero_cartao">Número do Cartão:</label>
+                <input type="text" id="numero_cartao" name="numero_cartao" placeholder="XXXX XXXX XXXX XXXX" required maxlength="19">
+
+                <label for="nome_cartao">Nome no Cartão:</label>
+                <input type="text" id="nome_cartao" name="nome_cartao" required>
+
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label for="validade">Validade (MM/AA):</label>
+                        <input type="text" id="validade" name="validade" placeholder="MM/AA" required maxlength="5">
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="cvv">CVV:</label>
+                        <input type="text" id="cvv" name="cvv" placeholder="XXX" required maxlength="4">
+                    </div>
+                </div>
+
+                <label for="senha_cartao">Senha do Cartão:</label>
+                <input type="password" id="senha_cartao" name="senha_cartao" required maxlength="6" placeholder="******">
+                
+                <p style="font-size: 0.9em; color: var(--text-color);">*A GBS Madeiras garante a segurança dos seus dados.</p>
+
+                <button type="submit" id="btn-finalizar-pagamento">Finalizar Compra</button>
+
+                <input type="hidden" id="produtos-json" name="produtos">
+                <input type="hidden" id="total" name="total">
+                <input type="hidden" id="nome" name="nome">
+                <input type="hidden" id="email" name="email">
+                <input type="hidden" id="endereco" name="endereco">
+                <input type="hidden" id="telefone" name="telefone">
+                <input type="hidden" name="formapagamento" value="Cartão de Crédito">
+
+            </form>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 GBS Madeiras - Todos os direitos reservados</p>
+    </footer>
+
+    <script>
+    // CARREGAR CARRINHO (Lógica mantida)
+    window.onload = function () {
+
+        let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+        let container = document.getElementById("itens");
+        let totalGeral = 0;
+
+        if (carrinho.length === 0) {
+            container.innerHTML = "<p>Seu carrinho está vazio</p>";
+            return;
+        }
+
+        let html = "";
+
+        carrinho.forEach(item => {
+            html += `
+                <div class='item-resumo'>
+                    <p><strong>${item.nome}</strong></p>
+                    <p>Quantidade: ${item.quantidade}</p>
+                    <p>Total: R$ ${item.total.toFixed(2)}</p>
+                    <hr>
+                </div>
+            `;
+            totalGeral += item.total;
+        });
+
+        container.innerHTML = html;
+        document.getElementById("total-geral").textContent = "R$ " + totalGeral.toFixed(2);
+
+        // ENVIAR PARA A CONFIRMAÇÃO
+        document.getElementById("produtos-json").value = JSON.stringify(carrinho);
+        document.getElementById("total").value = totalGeral.toFixed(2);
+    };
+
+
+    // NOVO SCRIPT PARA INTERCEPTAR O ENVIO DO FORMULÁRIO E REDIRECIONAR O CARTÃO
+    document.getElementById("form-compra").addEventListener('submit', function (event) {
+        event.preventDefault(); // 1. Impede o envio padrão do formulário
+
+        // Pega o valor selecionado no campo de pagamento ('boleto', 'cartao', 'pix')
+        const metodoPagamento = document.getElementById('formapagamento').value;
+        const form = event.target;
+        
+        // 2. Coleta todos os dados do formulário para repassá-los
+        const params = new URLSearchParams(new FormData(form)).toString();
+        
+        // 3. Verifica se o método é Cartão de Crédito
+        if (metodoPagamento === 'cartao') {
+            // Redireciona para a página de pagamento, passando os dados na URL
+            window.location.href = `pagamento_cartao.html?${params}`;
+        } else {
+            // Se for Boleto ou Pix, envia para a página de confirmação (action="confirmacao.html")
+            form.submit();
+        }
+    });
+</script>
+</body>
+</html>

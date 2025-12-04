@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boleto Bancário - GBS Madeiras</title>
+    <link rel="icon" href="gbsm.jpg" type="image/png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+    <!-- CSS Geral -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Script do Tema -->
+    <script defer src="theme-mode.js"></script>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <h1>GBS Madeiras</h1>
+        <img src="gbsm.jpg" alt="Logo da GBS Madeiras">
+        <p>Comércio de Móveis Maderias e Artefatos</p>
+
+        <!-- Botão do tema -->
+        <button id="theme-toggle" aria-label="Alternar modo claro/escuro">
+            <i class="fas fa-moon"></i> Modo Escuro
+        </button>
+    </header>
+
+    <!-- NAV -->
+    <nav>
+        <a href="index.html">Início</a>
+        <a href="produtos.html">Produtos</a>
+        <a href="contato.html">Contato</a>
+        <a href="pedido.html">Encomenda</a>
+        <a href="carrinho.html">Carrinho</a>
+    </nav>
+
+    <!-- CONTEÚDO -->
+    <div class="container">
+        <section id="pagamento-boleto">
+
+            <h2>Boleto Bancário Gerado</h2>
+            <p>Seu pedido foi registrado. Use os dados abaixo para efetuar o pagamento.</p>
+
+            <div id="boleto-info">
+
+                <h3>Resumo do Pedido:</h3>
+                <p>Valor Total: <strong id="total-boleto">R$ 0,00</strong></p>
+                <p>Vencimento (Simulado): 3 dias úteis a partir de hoje</p>
+
+                <hr>
+
+                <h3>Linha Digitável (Simulada):</h3>
+                <div class="linha-digitavel" id="linha-digitavel">(Gerando linha...)</div>
+
+                <p>O comprovante de pagamento deve ser enviado por email para agilizar a entrega.</p>
+            </div>
+
+            <!-- FORMULÁRIO DE REDIRECIONAMENTO -->
+            <form id="form-final-boleto" action="confirmacao.html" method="GET">
+
+                <!-- Campos Ocultos -->
+                <input type="hidden" id="produtos-json" name="produtos">
+                <input type="hidden" id="total" name="total">
+                <input type="hidden" id="nome" name="nome">
+                <input type="hidden" id="email" name="email">
+                <input type="hidden" id="endereco" name="endereco">
+                <input type="hidden" id="telefone" name="telefone">
+                <input type="hidden" name="formapagamento" value="Boleto Bancário">
+
+                <button type="submit" id="btn-finalizar-boleto">
+                    Prosseguir para Confirmação
+                </button>
+
+            </form>
+
+        </section>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2025 GBS Madeiras - Todos os direitos reservados</p>
+    </footer>
+
+    <!-- SCRIPT DO BOLETO -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+
+            const totalString = params.get('total');
+            const totalNumerico = parseFloat(totalString) || 0;
+
+            // Atualiza o valor no boleto
+            document.getElementById('total-boleto').textContent =
+                `R$ ${totalNumerico.toFixed(2)}`;
+
+            // Valor em centavos
+            const totalCentavos = Math.round(totalNumerico * 100);
+            const valorFormatado = String(totalCentavos).padStart(10, '0');
+
+            // Campos simulados
+            const campo1 = "34191.76208";
+            const campo2 = "00001.000000";
+            const campo3 = "00000.000000";
+            const dv = "8";
+            const fator = "9801" + valorFormatado;
+
+            const linha = `${campo1} ${campo2} ${campo3} ${dv} ${fator}`;
+
+            document.getElementById('linha-digitavel').textContent = linha;
+
+            // Preencher campos ocultos
+            document.getElementById('produtos-json').value = params.get('produtos');
+            document.getElementById('total').value = totalString;
+            document.getElementById('nome').value = params.get('nome');
+            document.getElementById('email').value = params.get('email');
+            document.getElementById('endereco').value = params.get('endereco');
+            document.getElementById('telefone').value = params.get('telefone');
+        });
+    </script>
+
+</body>
+</html>

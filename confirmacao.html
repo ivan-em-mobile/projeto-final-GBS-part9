@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compra Confirmada - GBS Madeiras</title>
+    <link rel="icon" href="gbsm.jpg" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Estilo básico para os itens do resumo na confirmação, seguindo o tema */
+        .item-resumo-confirmacao {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.1); /* Um fundo sutil para cada item */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+        }
+        .item-resumo-confirmacao p {
+            margin: 5px 0;
+            color: var(--body-text-color);
+        }
+    </style>
+</head>
+<body>
+
+    
+    <header>
+    <h1>GBS Madeiras</h1>
+    <img src="gbsm.jpg" alt="GBS Madeiras">
+    <p>Comércio de Móveis Maderias e Artefatos</p>
+    <button id="theme-toggle" aria-label="Alternar modo claro/escuro">
+        <i class="fas fa-moon"></i> Modo Escuro
+    </button>
+</header>
+<script src="theme-mode.js"></script>
+    
+    <nav>
+        <a href="index.html">Início</a>
+        <a href="produtos.html">Produtos</a>
+        <a href="contato.html">Contato</a>
+        <a href="pedido.html">Encomenda</a>
+        <a href="carrinho.html">Carrinho</a>
+    </nav>
+
+    
+    <div class="container">
+        <section id="confirmacao">
+            <h2>Compra Confirmada</h2>
+
+            <div id="detalhes-compra">
+                <h3>Itens do Pedido</h3>
+                <div id="lista-produtos-confirmacao">
+                    </div>
+                
+                <hr>
+                
+                <h3>Valor Total: <span id="produto-total">R$ 0,00</span></h3>
+            </div>
+
+            <div id="detalhes-entrega">
+                <h3>Dados de Entrega</h3>
+                <p><strong>Nome Completo:</strong> <span id="nome"></span></p>
+                <p><strong>E-mail:</strong> <span id="email"></span></p>
+                <p><strong>Endereço:</strong> <span id="endereco"></span></p>
+                <p><strong>Telefone:</strong> <span id="telefone"></span></p>
+                <p><strong>Forma de Pagamento:</strong> <span id="pagamento"></span></p>
+            </div>
+
+            <div id="mensagem">
+                <p>Obrigado pela sua compra! Em breve, você receberá mais informações sobre o envio do seu pedido.</p>
+            </div>
+
+            <div id="finalizar">
+                <button onclick="window.location.href='index.html';">Voltar à Página Inicial</button>
+                <button onclick="window.location.href='produtos.html';">Fazer Nova Compra</button>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 GBS Madeiras - Todos os direitos reservados</p>
+    </footer>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+
+        // --- 1. PROCESSAMENTO DOS ITENS DO CARRINHO ---
+        const produtosJson = params.get('produtos'); // String JSON vinda do carrinho
+        const totalGeral = params.get('total');      // Total geral
+
+        if (produtosJson) {
+            try {
+                const carrinho = JSON.parse(produtosJson);
+                let listaHtml = "";
+
+                carrinho.forEach(item => {
+                    // Monta o HTML para cada item do carrinho
+                    const precoUnitario = item.total / item.quantidade;
+                    listaHtml += `
+                        <div class="item-resumo-confirmacao">
+                            <p><strong>Produto:</strong> ${item.nome}</p>
+                            <p><strong>Quantidade:</strong> ${item.quantidade}</p>
+                            <p><strong>Preço Unitário:</strong> R$ ${precoUnitario.toFixed(2)}</p>
+                            <p><strong>Subtotal:</strong> R$ ${item.total.toFixed(2)}</p>
+                        </div>
+                    `;
+                });
+                
+                // Insere a lista de produtos no DOM
+                document.getElementById('lista-produtos-confirmacao').innerHTML = listaHtml;
+                
+                // Exibe o total geral
+                document.getElementById('produto-total').textContent = `R$ ${parseFloat(totalGeral).toFixed(2)}`;
+                
+                // Limpa o carrinho no localStorage (compra finalizada)
+                localStorage.removeItem("carrinho"); 
+
+            } catch (e) {
+                console.error("Erro ao analisar JSON dos produtos:", e);
+                document.getElementById('lista-produtos-confirmacao').innerHTML = '<p>Erro ao carregar detalhes dos produtos. (JSON Inválido)</p>';
+                document.getElementById('produto-total').textContent = 'R$ 0,00';
+            }
+        } else {
+            // Caso não haja JSON de produtos (Fallback ou compra de produto único)
+            document.getElementById('lista-produtos-confirmacao').innerHTML = '<p>Nenhum produto encontrado. A compra pode ter sido realizada em uma página de produto único.</p>';
+            document.getElementById('produto-total').textContent = `R$ ${parseFloat(totalGeral).toFixed(2)}`;
+        }
+
+
+        // --- 2. PROCESSAMENTO DOS DADOS DE ENTREGA ---
+        document.getElementById('nome').textContent = params.get('nome');
+        document.getElementById('email').textContent = params.get('email');
+        document.getElementById('endereco').textContent = params.get('endereco');
+        document.getElementById('telefone').textContent = params.get('telefone');
+        
+        // Pega a forma de pagamento (pode ter sido traduzida nas páginas intermediárias)
+        let pagamento = params.get('formapagamento');
+        if(params.get('pagamento')) {
+            pagamento = params.get('pagamento'); // Preferir o nome completo vindo de pagamento_cartao/boleto
+        }
+        document.getElementById('pagamento').textContent = pagamento;
+        
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho - GBS Madeiras</title>
+    <link rel="icon" href="gbsm.jpg" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    
+   <header>
+    <h1>GBS Madeiras</h1>
+    <img src="gbsm.jpg" alt="GBS Madeiras">
+    <p>Comércio de Móveis Maderias e Artefatos</p>
+    <button id="theme-toggle" aria-label="Alternar modo claro/escuro">
+        <i class="fas fa-moon"></i> Modo Escuro
+    </button>
+</header>
+<script src="theme-mode.js"></script>
+
+   
+    <nav>
+        <a href="index.html">Início</a>
+        <a href="produtos.html">Produtos</a>
+        <a href="contato.html">Contato</a>
+        <a href="pedido.html">Encomenda</a>
+        <a href="compra.html">Compra</a>
+    </nav>
+
+    
+    <div class="container">
+    <h2>Seu Carrinho</h2>
+
+    <div id="produto-carrinho">
+        <p><strong>Produto:</strong> <span id="produto-carrinho-nome">-</span></p>
+        <p><strong>Quantidade:</strong> <span id="produto-carrinho-quantidade">0</span></p>
+        <p><strong>Total:</strong> <span id="produto-carrinho-preco">R$ 0,00</span></p>
+    </div>
+
+    
+   <div id="finalizar">
+    <button onclick="finalizarCompra()">Finalizar Compra</button>
+</div>
+
+</div>
+
+    
+    <footer>
+        <p>&copy; 2025 GBS Madeiras - Todos os direitos reservados</p>
+    </footer>
+
+    <script src="carrinho.js">
+
+
+    
+        window.onload = function() {
+            const produto = localStorage.getItem('produto');
+            const quantidade = localStorage.getItem('quantidade');
+            const total = localStorage.getItem('total');
+
+            if (produto && quantidade && total) {
+                document.getElementById('produto-carrinho-nome').textContent = produto;
+                document.getElementById('produto-carrinho-quantidade').textContent = quantidade;
+                document.getElementById('produto-carrinho-preco').textContent = `R$ ${total}`;
+            } else {
+                document.getElementById('produto-carrinho').innerHTML = "<p>Carrinho vazio</p>";
+            }
+        };
+    </script>
+
+</body>
+</html>
+

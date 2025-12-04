@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compra - GBS Madeiras</title>
+    <link rel="icon" href="gbsm.jpg" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    
+    <header>
+    <h1>GBS Madeiras</h1>
+    <img src="gbsm.jpg" alt="GBS Madeiras">
+    <p>Comércio de Móveis Maderias e Artefatos</p>
+    <button id="theme-toggle" aria-label="Alternar modo claro/escuro">
+        <i class="fas fa-moon"></i> Modo Escuro
+    </button>
+</header>
+<script src="theme-mode.js"></script>
+
+    <nav>
+        <a href="index.html">Início</a>
+        <a href="produtos.html">Produtos</a>
+        <a href="contato.html">Contato</a>
+        <a href="pedido.html">Encomenda</a>
+        <a href="carrinho.html">Carrinho</a>
+    </nav>
+
+    
+    <div class="container">
+        <section id="compra">
+            <h2>Comprar Produto</h2>
+            <div id="produto-info">
+                <p id="produto-nome"></p>
+                <p><strong>Preço: </strong><span id="produto-preco"></span></p>
+                <form id="form-compra" action="finalizar_compra.html" method="POST">
+                    <label for="quantidade">Quantidade:</label>
+                    <input type="number" id="quantidade" name="quantidade" value="1" min="1" required>
+                    <br>
+                    <input type="submit" value="Adicionar ao Carrinho">
+                </form>
+                <div id="resumo-carrinho">
+                    <h3>Carrinho:</h3>
+                    <p id="resumo-produto">Produto: -</p>
+                    <p id="resumo-quantidade">Quantidade: 1</p>
+                    <p id="resumo-preco">Total: R$ 0,00</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    
+    <footer>
+        <p>&copy; 2025 GBS Madeiras - Todos os direitos reservados</p>
+    </footer>
+    <script src="compra.js">
+
+    
+        const params = new URLSearchParams(window.location.search);
+        const produto = params.get('produto');
+        
+        if (produto) {
+            document.getElementById('produto-nome').textContent = produto;
+           
+            let preco = 0;
+            switch (produto) {
+                case "Madeira de Pinus":
+                    preco = 15.00;
+                    break;
+                case "Madeira de Eucalipto":
+                    preco = 18.00;
+                    break;
+                case "Madeira de Teca":
+                    preco = 45.00;
+                    break;
+                case "Madeira de Jatobá":
+                    preco = 50.00;
+                    break;
+                case "Madeira de Angelim":
+                    preco = 35.00;
+                    break;
+                case "Madeira de Cedro":
+                    preco = 30.00;
+                    break;
+                case "Madeira de Cumaru":
+                    preco = 60.00;
+                    break;
+                case "Madeira de Itaúba":
+                    preco = 40.00;
+                    break;
+                case "Madeira de Freijó":
+                    preco = 25.00;
+                    break;
+                case "Madeira de Caviúna":
+                    preco = 70.00;
+                    break;
+                case "Madeira de Peroba":
+                    preco = 28.00;
+                    break;
+                case "Madeira de Massaranduba":
+                    preco = 55.00;
+                    break;
+                case "Madeira de Mogno":
+                    preco = 150.00;
+                    break;
+                case "Madeira de Roxinho":
+                    preco = 85.00;
+                    break;
+                case "Madeira de Sucupira":
+                    preco = 45.00;
+                    break;
+                case "Madeira de Aroeira":
+                    preco = 38.00;
+                    break;
+                case "Tábua de Pinus":
+                    preco = 20.00;
+                    break;
+                case "Tábua de Eucalipto":
+                    preco = 22.00;
+                    break;
+            }
+            document.getElementById('produto-preco').textContent = `R$ ${preco.toFixed(2)}`;
+            
+            
+            document.getElementById('form-compra').addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                const quantidade = document.getElementById('quantidade').value;
+                const total = preco * quantidade;
+                
+                
+                document.getElementById('resumo-produto').textContent = `Produto: ${produto}`;
+                document.getElementById('resumo-quantidade').textContent = `Quantidade: ${quantidade}`;
+                document.getElementById('resumo-preco').textContent = `Total: R$ ${total.toFixed(2)}`;
+                
+                
+                localStorage.setItem('produto', produto);
+                localStorage.setItem('quantidade', quantidade);
+                localStorage.setItem('total', total.toFixed(2));
+
+                
+                setTimeout(() => {
+                    window.location.href = "carrinho.html";
+                }, 1000);
+            });
+        }
+        
+
+    </script>
+    
+
+
+</body>
+</html>
+
